@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel Administrativo - Libromundo</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body { background-color: #f4f5f7; }
+        .card { border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.08); }
+    </style>
+</head>
+<body>
+    <div class="container py-5">
+        <div class="card p-4">
+            <h1 class="mb-3">Panel Administrativo</h1>
+            <p class="mb-4">Acceso autorizado para usuarios con permisos administrativos.</p>
+            <div class="row g-3">
+                <div class="col-md-4">
+                    <a href="{% url 'ventas' %}" class="btn btn-primary w-100">Ver reportes</a>
+                </div>
+                <div class="col-md-4">
+                    <a href="{% url 'catalogo' %}" class="btn btn-outline-secondary w-100">Ver catálogo</a>
+                </div>
+                <div class="col-md-4">
+                    <a href="{% url 'home' %}" class="btn btn-success w-100">Volver al inicio</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

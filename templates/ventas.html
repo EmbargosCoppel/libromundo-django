@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+
+{% block title %}Reporte de Ventas - Libromundo Admin{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="card bg-secondary text-white shadow">
+        <div class="card-body">
+            <h1 class="text-warning">📊 Panel de Ventas Privado</h1>
+            <hr>
+            <p>Bienvenido, <strong>{{ user.username }}</strong>. Estás viendo datos sensibles de Libromundo.</p>
+            
+            <table class="table table-dark table-striped mt-4">
+                <thead>
+                    <tr>
+                        <th>ID Transacción</th>
+                        <th>Libro</th>
+                        <th>Monto</th>
+                        <th>Estado</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>#1001</td>
+                        <td>Warhammer 40k: Lore actualizado</td>
+                        <td>$45.00</td>
+                        <td><span class="badge bg-success">Completado</span></td>
+                    </tr>
+                    <tr>
+                        <td>#1002</td>
+                        <td>Django para dummies</td>
+                        <td>$30.00</td>
+                        <td><span class="badge bg-warning">Pendiente</span></td>
+                    </tr>
+                </tbody>
+            </table>
+            <a href="{% url 'home' %}" class="btn btn-light mt-3">Volver al Inicio</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

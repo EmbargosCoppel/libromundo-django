@@ -1,0 +1,18 @@
+{"asctime": "2026-03-17 19:38:15,981", "levelname": "INFO", "message": "Cierre de sesi\u00f3n: anakin", "ip": "127.0.0.1", "user": "anakin", "event_type": "LOGOUT"}
+{"asctime": "2026-03-17 19:38:26,707", "levelname": "WARNING", "message": "Intento de login fallido:  SADGC", "ip": "127.0.0.1", "user": " SADGC", "event_type": "AUTH_FAIL"}
+{"asctime": "2026-03-17 19:41:54,549", "levelname": "WARNING", "message": "Intento de registro fallido: angel", "ip": "127.0.0.1", "user": "angel", "event_type": "REGISTRATION_FAIL"}
+{"asctime": "2026-03-17 19:42:26,154", "levelname": "INFO", "message": "Nuevo usuario registrado: pancho", "ip": "127.0.0.1", "user": "pancho", "event_type": "DATA_MOD"}
+{"asctime": "2026-03-17 19:42:38,636", "levelname": "INFO", "message": "Inicio de sesi\u00f3n exitoso: pancho", "ip": "127.0.0.1", "user": "pancho", "event_type": "AUTH_SUCCESS"}
+{"asctime": "2026-03-17 19:52:11,682", "levelname": "INFO", "message": "Cierre de sesi\u00f3n: pancho", "ip": "127.0.0.1", "user": "pancho", "event_type": "LOGOUT"}
+{"asctime": "2026-03-17 19:52:26,024", "levelname": "INFO", "message": "Inicio de sesi\u00f3n exitoso: anakin", "ip": "127.0.0.1", "user": "anakin", "event_type": "AUTH_SUCCESS"}
+{"asctime": "2026-03-17 19:52:27,951", "levelname": "INFO", "message": "Cierre de sesi\u00f3n: anakin", "ip": "127.0.0.1", "user": "anakin", "event_type": "LOGOUT"}
+{"asctime": "2026-03-17 19:52:36,311", "levelname": "INFO", "message": "Inicio de sesi\u00f3n exitoso: Angel1", "ip": "127.0.0.1", "user": "Angel1", "event_type": "AUTH_SUCCESS"}
+{"asctime": "2026-03-17 19:52:38,263", "levelname": "INFO", "message": "Cierre de sesi\u00f3n: Angel1", "ip": "127.0.0.1", "user": "Angel1", "event_type": "LOGOUT"}
+{"asctime": "2026-03-19 18:32:42,544", "levelname": "WARNING", "message": "Intento de login fallido: hacker", "ip": "127.0.0.1", "user": "hacker", "event_type": "AUTH_FAIL"}
+{"asctime": "2026-03-26 18:52:59,460", "levelname": "WARNING", "message": "Intento de login fallido: Miguel", "ip": "127.0.0.1", "user": "Miguel", "event_type": "AUTH_FAIL"}
+{"asctime": "2026-03-26 18:53:00,889", "levelname": "WARNING", "message": "Intento de login fallido: Miguel", "ip": "127.0.0.1", "user": "Miguel", "event_type": "AUTH_FAIL"}
+{"asctime": "2026-03-26 18:53:53,972", "levelname": "WARNING", "message": "Intento de login fallido: admin", "ip": "127.0.0.1", "user": "admin", "event_type": "AUTH_FAIL"}
+{"asctime": "2026-03-26 18:54:48,868", "levelname": "INFO", "message": "Nuevo usuario registrado: Prueba", "ip": "127.0.0.1", "user": "Prueba", "event_type": "DATA_MOD"}
+{"asctime": "2026-03-26 18:55:14,122", "levelname": "WARNING", "message": "Intento de login fallido: prueba", "ip": "127.0.0.1", "user": "prueba", "event_type": "AUTH_FAIL"}
+{"asctime": "2026-03-26 18:55:33,684", "levelname": "INFO", "message": "Inicio de sesi\u00f3n exitoso: Prueba", "ip": "127.0.0.1", "user": "Prueba", "event_type": "AUTH_SUCCESS"}
+{"asctime": "2026-03-26 18:57:18,782", "levelname": "INFO", "message": "Acceso a lectura online: Libro ID 1", "ip": "127.0.0.1", "user": "Prueba", "event_type": "ONLINE_READ"}

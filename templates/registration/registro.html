@@ -1,0 +1,91 @@
+{% extends 'base.html' %}
+
+{% block title %}Registro - Libromundo{% endblock %}
+
+{% block extra_head %}
+<style>
+    .card { border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); border: none; }
+    /* Ocultamos las ayudas feas de Django */
+    .helptext, .help-data { display: none; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-5">
+            <div class="card p-4">
+                <h2 class="text-center mb-4">Crear Cuenta</h2>
+                
+                <form method="post" id="registroForm">
+                    {% csrf_token %}
+                    {% for field in form %}
+                        {% if field.name != 'captcha' %}
+                        <div class="mb-3">
+                            <label class="form-label"><strong>{{ field.label }}</strong></label>
+                            {% if field.name == 'password1' or field.name == 'password2' %}
+                                <div class="input-group">
+                                    {{ field }}
+                                    <button class="btn btn-outline-secondary" type="button" onclick="togglePassword('{{ field.id_for_label }}')">
+                                        <i class="bi bi-eye"></i>
+                                    </button>
+                                </div>
+                            {% else %}
+                                {{ field }}
+                            {% endif %}
+                            {% if field.errors %}
+                                <div class="d-none actual-errors">{{ field.errors|striptags }}</div>
+                            {% endif %}
+                        </div>
+                        {% endif %}
+                    {% endfor %}
+                    <div class="mb-3">
+                        {{ form.captcha }}
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100 mt-2">Registrarse</button>
+                </form>
+                
+                <p class="text-center mt-3">¿Ya tienes cuenta? <a href="{% url 'login' %}">Inicia sesión</a></p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Lógica del Pop-up
+    document.addEventListener('DOMContentLoaded', function() {
+        const errorDivs = document.querySelectorAll('.actual-errors');
+        if (errorDivs.length > 0) {
+            let todosLosErrores = "";
+            errorDivs.forEach(div => {
+                todosLosErrores += div.innerText + "\n";
+            });
+
+            Swal.fire({
+                title: '¡Revisa los requisitos!',
+                text: todosLosErrores,
+                icon: 'warning',
+                confirmButtonText: 'Corregir',
+                confirmButtonColor: '#0d6efd'
+            });
+        }
+    });
+
+    function togglePassword(fieldId) {
+        const field = document.getElementById(fieldId);
+        const button = field.nextElementSibling;
+        const icon = button.querySelector('i');
+        if (field.type === 'password') {
+            field.type = 'text';
+            icon.classList.remove('bi-eye');
+            icon.classList.add('bi-eye-slash');
+        } else {
+            field.type = 'password';
+            icon.classList.remove('bi-eye-slash');
+            icon.classList.add('bi-eye');
+        }
+    }
+</script>
+{% endblock %}

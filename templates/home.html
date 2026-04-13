@@ -1,0 +1,81 @@
+{% extends 'base.html' %}
+
+{% block title %}Inicio - Libromundo{% endblock %}
+
+{% block content %}
+<div class="container mt-5" style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;">
+    {% if user.is_authenticated %}
+        
+        {# --- VISTA PARA ADMINISTRADORES / STAFF --- #}
+        {% if user.is_staff or user.is_superuser %}
+            <div style="background-color: #212529; color: #ffc107; padding: 40px; border-radius: 15px; border: 3px solid #ffc107; box-shadow: 0 4px 15px rgba(0,0,0,0.3);">
+                <h1>📊 PANEL DE CONTROL: LIBROMUNDO</h1>
+                <p style="color: white;">Sesión administrativa activa: <strong>{{ user.username }}</strong></p>
+                <hr style="border-color: #ffc107;">
+                <div style="display: flex; gap: 15px; flex-wrap: wrap;">
+                    <a href="{% url 'ventas' %}" style="padding: 15px 25px; background: #ffc107; color: black; text-decoration: none; font-weight: bold; border-radius: 8px; transition: 0.3s;">
+                        🚀 REPORTES FINANCIEROS
+                    </a>
+                    <a href="{% url 'panel_admin' %}" style="padding: 15px 25px; background: #6c757d; color: white; text-decoration: none; font-weight: bold; border-radius: 8px;">
+                        ⚙️ GESTIÓN DE USUARIOS
+                    </a>
+                </div>
+            </div>
+
+        {# --- VISTA PARA CLIENTES --- #}
+        {% else %}
+            <div style="background-color: #ffffff; padding: 40px; border-radius: 15px; border: 1px solid #dee2e6; box-shadow: 0 4px 10px rgba(0,0,0,0.05); text-align: center;">
+                <h1 style="color: #004085;">¡Bienvenido a Libromundo! 📖</h1>
+                <p>Hola <strong>{{ user.username }}</strong>, tenemos nuevas lecturas para ti.</p>
+                
+                <div style="margin: 30px 0; display: flex; justify-content: center; gap: 20px;">
+                    <a href="{% url 'catalogo' %}" style="padding: 12px 25px; background: #007bff; color: white; text-decoration: none; border-radius: 8px; font-weight: bold;">
+                        📚 Ver Catálogo Completo
+                    </a>
+                    <a href="{% url 'carrito' %}" style="padding: 12px 25px; background: #28a745; color: white; text-decoration: none; border-radius: 8px; font-weight: bold;">
+                        🛒 Mi Carrito
+                    </a>
+                </div>
+
+                <hr>
+                
+                <h3 style="margin-top: 20px;">🔥 Novedades para leer hoy</h3>
+                <div style="display: flex; justify-content: center; gap: 15px; margin-top: 15px;">
+                    {% for libro in libros %}
+                        <div style="border: 1px solid #ddd; padding: 15px; border-radius: 10px; width: 200px; background: #f9f9f9;">
+                            <h5 style="font-size: 1rem; margin-bottom: 5px;">{{ libro.titulo }}</h5>
+                            <p style="font-size: 0.8rem; color: #666;">{{ libro.autor }}</p>
+                            <a href="{% url 'lector' libro.id %}" style="font-size: 0.8rem; color: #007bff; text-decoration: none; font-weight: bold;">
+                                📖 Leer Online
+                            </a>
+                        </div>
+                    {% empty %}
+                        <p>No hay libros destacados en este momento.</p>
+                    {% endfor %}
+                </div>
+            </div>
+        {% endif %}
+
+        {# --- FOOTER DE SESIÓN --- #}
+        <div style="margin-top: 30px; border-top: 1px solid #eee; padding-top: 15px; text-align: center;">
+            <p style="font-size: 0.9rem; color: #6c757d;">Estado de la conexión: <strong>Segura e Instrumentada</strong></p>
+            <form action="{% url 'logout' %}" method="post">
+                {% csrf_token %}
+                <button type="submit" style="background: none; border: none; color: #dc3545; cursor: pointer; text-decoration: underline; font-weight: bold;">
+                    Cerrar Sesión Auditada
+                </button>
+            </form>
+        </div>
+
+    {% else %}
+        {# --- VISTA PARA ANÓNIMOS --- #}
+        <div style="text-align: center; padding: 50px; background: #fff; border-radius: 15px; border: 1px solid #eee;">
+            <h2 style="color: #333;">Contenido Restringido</h2>
+            <p style="color: #777;">Debes iniciar sesión para acceder a la biblioteca de Libromundo.</p>
+            <a href="{% url 'login' %}" style="padding: 12px 30px; background: #007bff; color: white; text-decoration: none; border-radius: 8px; font-weight: bold; display: inline-block; margin-top: 15px;">
+                Ir al Inicio de Sesión
+            </a>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

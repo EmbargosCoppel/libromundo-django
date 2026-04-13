@@ -1,0 +1,88 @@
+{% extends 'base.html' %}
+
+{% block title %}Catálogo - Libromundo{% endblock %}
+
+{% block extra_head %}
+<style>
+    .card { border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); border: none; margin-bottom: 20px; }
+    .book-card { transition: transform 0.2s; }
+    .book-card:hover { transform: scale(1.05); }
+    .category-filter { margin-bottom: 30px; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h1 class="text-center mb-4">Catálogo de Libros</h1>
+
+    <!-- Búsqueda -->
+    <div class="mb-4">
+        <form method="get" class="d-flex">
+            <input type="text" name="q" class="form-control me-2" placeholder="Buscar por título, autor o descripción..." value="{{ query }}">
+            <button type="submit" class="btn btn-primary">Buscar</button>
+        </form>
+    </div>
+
+    <div class="category-filter">
+        <h5>Filtrar por Categoría:</h5>
+        <div class="btn-group" role="group">
+            <a href="{% url 'catalogo' %}{% if query %}?q={{ query }}{% endif %}" class="btn btn-outline-primary">Todas</a>
+            {% for categoria in categorias %}
+                <a href="?categoria={{ categoria.id }}{% if query %}&q={{ query }}{% endif %}" class="btn btn-outline-primary">{{ categoria.nombre }}</a>
+            {% endfor %}
+        </div>
+    </div>
+
+    <div class="row">
+        {% for libro in page_obj %}
+            <div class="col-md-4">
+                <div class="card book-card">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ libro.titulo }}</h5>
+                        <p class="card-text">Autor: {{ libro.autor }}</p>
+                        <p class="card-text">Categoría: {{ libro.categoria.nombre|default:"Sin categoría" }}</p>
+                        <p class="card-text">Precio: ${{ libro.precio }}</p>
+                        <a href="{% url 'lector' libro.id %}" class="btn btn-primary">Leer Online</a>
+                        <a href="{% url 'agregar_al_carrito' libro.id %}" class="btn btn-success">Agregar al Carrito</a>
+                    </div>
+                </div>
+            </div>
+        {% empty %}
+            <p class="text-center">No hay libros disponibles con esos criterios.</p>
+        {% endfor %}
+    </div>
+
+    <!-- Paginación -->
+    {% if page_obj.has_other_pages %}
+        <nav aria-label="Paginación del catálogo">
+            <ul class="pagination justify-content-center">
+                {% if page_obj.has_previous %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ page_obj.previous_page_number }}{% if query %}&q={{ query }}{% endif %}{% if categoria_id %}&categoria={{ categoria_id }}{% endif %}">Anterior</a>
+                    </li>
+                {% endif %}
+                
+                {% for num in page_obj.paginator.page_range %}
+                    {% if page_obj.number == num %}
+                        <li class="page-item active"><span class="page-link">{{ num }}</span></li>
+                    {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ num }}{% if query %}&q={{ query }}{% endif %}{% if categoria_id %}&categoria={{ categoria_id }}{% endif %}">{{ num }}</a>
+                        </li>
+                    {% endif %}
+                {% endfor %}
+                
+                {% if page_obj.has_next %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ page_obj.next_page_number }}{% if query %}&q={{ query }}{% endif %}{% if categoria_id %}&categoria={{ categoria_id }}{% endif %}">Siguiente</a>
+                    </li>
+                {% endif %}
+            </ul>
+        </nav>
+    {% endif %}
+
+    <div class="text-center mt-4">
+        <a href="{% url 'home' %}" class="btn btn-secondary">Volver al Inicio</a>
+    </div>
+</div>
+{% endblock %}

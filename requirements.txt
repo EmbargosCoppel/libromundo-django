@@ -1,0 +1,5 @@
+django
+mysqlclient
+python-json-logger
+django-recaptcha
+djangorestframework
