@@ -1,15 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
 
-class Categoria(models.Model):
-    nombre = models.CharField(max_length=100, unique=True)
-    descripcion = models.TextField(blank=True)
-
-    def __str__(self):
-        return self.nombre
-
-from django.db import models
-from django.contrib.auth.models import User
 
 class Categoria(models.Model):
     nombre = models.CharField(max_length=100, unique=True)
@@ -17,6 +8,7 @@ class Categoria(models.Model):
 
     def __str__(self):
         return self.nombre
+
 
 class Libro(models.Model):
     titulo = models.CharField(max_length=200)
@@ -30,12 +22,14 @@ class Libro(models.Model):
     def __str__(self):
         return self.titulo
 
+
 class Carrito(models.Model):
     usuario = models.OneToOneField(User, on_delete=models.CASCADE)
     libros = models.ManyToManyField(Libro, through='ItemCarrito')
 
     def __str__(self):
         return f"Carrito de {self.usuario.username}"
+
 
 class ItemCarrito(models.Model):
     carrito = models.ForeignKey(Carrito, on_delete=models.CASCADE)
@@ -44,6 +38,7 @@ class ItemCarrito(models.Model):
 
     def __str__(self):
         return f"{self.cantidad} x {self.libro.titulo}"
+
 
 class Resena(models.Model):
     usuario = models.ForeignKey(User, on_delete=models.CASCADE)

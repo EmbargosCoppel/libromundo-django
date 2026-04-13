@@ -4,12 +4,13 @@ from django.db.models import Q
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required, user_passes_test
-from django.views.decorators.http import require_http_methods
-from django.db import DatabaseError 
+from django.views.decorators.http import require_http_methods, require_POST
+from django.db import DatabaseError
+from django.shortcuts import render, redirect, get_object_or_404
 from rest_framework import generics, permissions
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
-from .forms import RegistroForm, LoginForm
+from .forms import RegistroForm, LoginForm, ResenaForm
 from .models import Libro, Carrito, ItemCarrito, Categoria, Resena
 from .serializers import LibroSerializer, CarritoSerializer, ResenaSerializer
 import logging
@@ -96,6 +97,7 @@ def registro(request):
         form = RegistroForm()
     return render(request, 'registration/registro.html', {'form': form})
 
+@require_POST
 def logout_view(request):
     user = request.user.username if request.user.is_authenticated else "anonimo"
     client_ip = get_client_ip(request)
@@ -146,6 +148,7 @@ def catalogo(request):
     })
 
 @login_required
+@require_POST
 def agregar_al_carrito(request, libro_id):
     libro = get_object_or_404(Libro, id=libro_id)
     carrito, created = Carrito.objects.get_or_create(usuario=request.user)
@@ -157,6 +160,7 @@ def agregar_al_carrito(request, libro_id):
     return redirect('catalogo')
 
 @login_required
+@require_POST
 def eliminar_item_carrito(request, item_id):
     item = get_object_or_404(ItemCarrito, id=item_id, carrito__usuario=request.user)
     item.delete()
@@ -171,18 +175,22 @@ def ver_carrito(request):
     return render(request, 'carrito.html', {'items': items, 'total': total})
 
 @login_required
+@require_POST
 def agregar_resena(request, libro_id):
     libro = get_object_or_404(Libro, id=libro_id)
-    if request.method == 'POST':
-        calificacion = request.POST.get('calificacion')
-        comentario = request.POST.get('comentario')
+    form = ResenaForm(request.POST)
+    if form.is_valid():
         resena, created = Resena.objects.update_or_create(
             usuario=request.user,
             libro=libro,
-            defaults={'calificacion': calificacion, 'comentario': comentario}
+            defaults={
+                'calificacion': form.cleaned_data['calificacion'],
+                'comentario': form.cleaned_data['comentario'],
+            }
         )
         messages.success(request, "Reseña guardada exitosamente.")
-        return redirect('lector', libro_id=libro_id)
+    else:
+        messages.error(request, "Datos de reseña inválidos. La calificación debe ser entre 1 y 5.")
     return redirect('lector', libro_id=libro_id)
 
 @login_required

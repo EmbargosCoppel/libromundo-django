@@ -43,7 +43,10 @@
                         <p class="card-text">Categoría: {{ libro.categoria.nombre|default:"Sin categoría" }}</p>
                         <p class="card-text">Precio: ${{ libro.precio }}</p>
                         <a href="{% url 'lector' libro.id %}" class="btn btn-primary">Leer Online</a>
-                        <a href="{% url 'agregar_al_carrito' libro.id %}" class="btn btn-success">Agregar al Carrito</a>
+                        <form action="{% url 'agregar_al_carrito' libro.id %}" method="post" style="display:inline;">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-success">Agregar al Carrito</button>
+                        </form>
                     </div>
                 </div>
             </div>
