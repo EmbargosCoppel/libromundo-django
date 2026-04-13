@@ -76,7 +76,7 @@
 
                 Swal.fire({
                     title: titleText,
-                    text: "{{ message|safe }}",
+                    text: "{{ message|escapejs }}",
                     icon: iconType,
                     confirmButtonText: 'Aceptar',
                     confirmButtonColor: '#0d6efd'

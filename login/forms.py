@@ -59,3 +59,8 @@ class LoginForm(AuthenticationForm):
         if not username:
             raise forms.ValidationError("El nombre de usuario es obligatorio.")
         return username
+
+class ResenaForm(forms.Form):
+    """Validates review input to prevent unvalidated data from reaching the DB."""
+    calificacion = forms.IntegerField(min_value=1, max_value=5)
+    comentario = forms.CharField(required=False, max_length=5000, widget=forms.Textarea)
