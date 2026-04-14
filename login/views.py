@@ -1,3 +1,4 @@
+from django.shortcuts import render, redirect, get_object_or_404
 from django.core.mail import send_mail
 from django.core.paginator import Paginator
 from django.db.models import Q
@@ -31,7 +32,7 @@ def login_view(request):
     if request.user.is_authenticated:
         return redirect('home')
     if request.method == 'POST':
-        form = LoginForm(request.POST)
+        form = LoginForm(request, data=request.POST)
         if form.is_valid():
             usuario = form.cleaned_data.get('username')
             clave = form.cleaned_data.get('password')
@@ -43,7 +44,8 @@ def login_view(request):
                     security_logger.info(f"Inicio de sesión exitoso: {usuario}", extra={
                         'ip': client_ip, 'user': usuario, 'event_type': 'AUTH_SUCCESS'
                     })
-                    return redirect('home')
+                    next_url = request.POST.get('next') or request.GET.get('next') or 'home'
+                    return redirect(next_url)
                 else:
                     security_logger.warning(f"Intento de login fallido: {usuario}", extra={
                         'ip': client_ip, 'user': usuario if usuario else 'anonimo', 'event_type': 'AUTH_FAIL'
@@ -57,7 +59,7 @@ def login_view(request):
         else:
             messages.error(request, "CAPTCHA inválido o datos incorrectos.")
     else:
-        form = LoginForm()
+        form = LoginForm(request)
     return render(request, 'registration/login.html', {'form': form})
 
 def registro(request):
