@@ -7,6 +7,7 @@ from django.contrib.auth.decorators import login_required, user_passes_test
 from django.shortcuts import render, redirect, get_object_or_404
 from django.views.decorators.http import require_http_methods
 from django.db import DatabaseError
+from django.conf import settings
 from rest_framework import generics, permissions
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
@@ -19,13 +20,15 @@ import logging
 security_logger = logging.getLogger('libromundo_security')
 
 def get_client_ip(request):
-    """Obtiene la IP real del cliente para análisis (Punto 4.2)"""
-    x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
-    if x_forwarded_for:
-        ip = x_forwarded_for.split(',')[0]
-    else:
-        ip = request.META.get('REMOTE_ADDR')
-    return ip
+    """Obtiene la IP real del cliente de forma segura.
+    Solo confía en X-Forwarded-For si USE_X_FORWARDED_FOR está habilitado en settings.
+    Esto previene spoofing de IP cuando no hay reverse proxy (Punto 4.2)."""
+    use_xff = getattr(settings, 'USE_X_FORWARDED_FOR', False)
+    if use_xff:
+        x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
+        if x_forwarded_for:
+            return x_forwarded_for.split(',')[0].strip()
+    return request.META.get('REMOTE_ADDR', 'unknown')
 
 
 def login_view(request):

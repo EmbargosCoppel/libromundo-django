@@ -1,0 +1,63 @@
+============================================================
+  REPORTE DAST - LIBROMUNDO
+  Fecha: 2026-04-14 05:36:33
+  Total pruebas: 21
+============================================================
+
+  RESUMEN: 15 PASS | 3 FAIL | 2 WARNING
+
+
+--- HIGH ---
+  ❌ [FAIL] Auth Required: /catalogo/
+      Ruta accesible sin autenticación.
+      💡 Agregar @login_required o @user_passes_test.
+  ❌ [FAIL] Auth Required: /carrito/
+      Ruta accesible sin autenticación.
+      💡 Agregar @login_required o @user_passes_test.
+  ❌ [FAIL] Auth Required: /leer/1/
+      Ruta accesible sin autenticación.
+      💡 Agregar @login_required o @user_passes_test.
+
+--- MEDIUM ---
+  ⚠️ [WARNING] Error Info Leak: /leer/99999/
+      La página de error puede exponer información: password
+      💡 Configurar DEBUG=False en producción y usar páginas de error personalizadas.
+  ⚠️ [WARNING] HTTP Methods: /comprar/ GET
+      Método GET retornó status 200 en /comprar/.
+      💡 Usar @require_http_methods para restringir métodos.
+
+--- INFO ---
+  ✅ [PASS] Header: X-Frame-Options
+      Presente con valor: DENY
+  ✅ [PASS] Header: X-Content-Type-Options
+      Presente con valor: nosniff
+  ✅ [PASS] Header: Content-Security-Policy
+      Presente con valor: font-src 'self' https://cdn.jsdelivr.net https://fonts.gstatic.com; style-src 'self' 'unsafe-inline'
+  ✅ [PASS] Header: Referrer-Policy
+      Presente con valor: strict-origin-when-cross-origin
+  ✅ [PASS] Header: Permissions-Policy
+      Presente con valor: camera=(), microphone=(), geolocation=()
+  ✅ [PASS] CSRF Protection
+      Token CSRF presente en formularios de login.
+  ✅ [PASS] SQL Injection (Login)
+      No se detectó vulnerabilidad SQL injection en login. Django ORM protege contra inyección.
+  ✅ [PASS] XSS Reflected (Catálogo)
+      No se detectó XSS reflejado. Templates de Django escapan contenido automáticamente.
+  ✅ [PASS] Directory Traversal
+      No se detectó directory traversal. Django maneja rutas de forma segura.
+  ✅ [PASS] Session Cookie: HttpOnly
+      Cookie de sesión tiene atributo HttpOnly.
+  ✅ [PASS] Session Cookie: SameSite
+      Cookie de sesión tiene atributo SameSite.
+  ✅ [PASS] Error Handling: /nonexistent-page-12345/
+      Respuesta segura (status 404), sin información sensible expuesta.
+  ⚠️ [INFO] Error Handling: /api/libros/99999/
+      Respuesta segura (status 403), sin información sensible expuesta.
+  ✅ [PASS] Auth Required: /panel/
+      Ruta protegida (status 403).
+  ✅ [PASS] Auth Required: /ventas/
+      Ruta protegida (status 403).
+  ✅ [PASS] Brute Force Protection
+      Rate limiting activado después de 2 intentos.
+
+============================================================
