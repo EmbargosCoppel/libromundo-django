@@ -51,10 +51,16 @@ def login_view(request):
         else:
             client_ip = get_client_ip(request)
             usuario = request.POST.get('username', 'anonimo')
-            security_logger.warning(f"Intento de login fallido: {usuario}", extra={
-                'ip': client_ip, 'user': usuario, 'event_type': 'AUTH_FAIL'
-            })
-            messages.error(request, "Usuario o contraseña incorrectos.")
+            if 'captcha' in form.errors:
+                security_logger.warning(f"CAPTCHA fallido para: {usuario}", extra={
+                    'ip': client_ip, 'user': usuario, 'event_type': 'CAPTCHA_FAIL'
+                })
+                messages.error(request, "CAPTCHA inválido. Inténtalo de nuevo.")
+            else:
+                security_logger.warning(f"Intento de login fallido: {usuario}", extra={
+                    'ip': client_ip, 'user': usuario, 'event_type': 'AUTH_FAIL'
+                })
+                messages.error(request, "Usuario o contraseña incorrectos.")
     else:
         form = LoginForm(request)
     return render(request, 'registration/login.html', {'form': form})
