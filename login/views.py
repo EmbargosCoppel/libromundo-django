@@ -3,7 +3,7 @@ from django.core.mail import send_mail
 from django.core.paginator import Paginator
 from django.db.models import Q
 from django.contrib import messages
-from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth import login, logout
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.views.decorators.http import require_http_methods
 from django.db import DatabaseError 
@@ -33,30 +33,29 @@ def login_view(request):
         return redirect('home')
     if request.method == 'POST':
         form = LoginForm(request, data=request.POST)
-        if form.is_valid():
-            usuario = form.cleaned_data.get('username')
-            clave = form.cleaned_data.get('password')
-            client_ip = get_client_ip(request)
-            try:
-                user = authenticate(request, username=usuario, password=clave)
-                if user is not None:
-                    login(request, user)
-                    security_logger.info(f"Inicio de sesión exitoso: {usuario}", extra={
-                        'ip': client_ip, 'user': usuario, 'event_type': 'AUTH_SUCCESS'
-                    })
-                    return redirect('home')
-                else:
+        client_ip = get_client_ip(request)
+        try:
+            if form.is_valid():
+                user = form.get_user()
+                login(request, user)
+                security_logger.info(f"Inicio de sesión exitoso: {user.username}", extra={
+                    'ip': client_ip, 'user': user.username, 'event_type': 'AUTH_SUCCESS'
+                })
+                return redirect('home')
+            else:
+                usuario = request.POST.get('username', 'anonimo')
+                if '__all__' in form.errors:
                     security_logger.warning(f"Intento de login fallido: {usuario}", extra={
-                        'ip': client_ip, 'user': usuario if usuario else 'anonimo', 'event_type': 'AUTH_FAIL'
+                        'ip': client_ip, 'user': usuario, 'event_type': 'AUTH_FAIL'
                     })
                     messages.error(request, "Usuario o contraseña incorrectos.")
-            except DatabaseError as e:
-                security_logger.error(f"Error crítico: SQLException detectada - {str(e)}", extra={
-                    'ip': client_ip, 'user': 'sistema', 'event_type': 'DATABASE_ERROR'
-                })
-                messages.error(request, "Error técnico de conexión.")
-        else:
-            messages.error(request, "CAPTCHA inválido o datos incorrectos.")
+                else:
+                    messages.error(request, "CAPTCHA inválido o datos incorrectos.")
+        except DatabaseError as e:
+            security_logger.error(f"Error crítico: SQLException detectada - {str(e)}", extra={
+                'ip': client_ip, 'user': 'sistema', 'event_type': 'DATABASE_ERROR'
+            })
+            messages.error(request, "Error técnico de conexión.")
     else:
         form = LoginForm()
     return render(request, 'registration/login.html', {'form': form})
