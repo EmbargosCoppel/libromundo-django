@@ -1,4 +1,5 @@
 from django.shortcuts import render, redirect, get_object_or_404
+from django.utils.http import url_has_allowed_host_and_scheme
 from django.core.mail import send_mail
 from django.core.paginator import Paginator
 from django.db.models import Q
@@ -44,7 +45,9 @@ def login_view(request):
                     security_logger.info(f"Inicio de sesión exitoso: {usuario}", extra={
                         'ip': client_ip, 'user': usuario, 'event_type': 'AUTH_SUCCESS'
                     })
-                    next_url = request.POST.get('next') or request.GET.get('next') or 'home'
+                    next_url = request.POST.get('next') or request.GET.get('next') or ''
+                    if not url_has_allowed_host_and_scheme(next_url, allowed_hosts={request.get_host()}):
+                        next_url = 'home'
                     return redirect(next_url)
                 else:
                     security_logger.warning(f"Intento de login fallido: {usuario}", extra={
