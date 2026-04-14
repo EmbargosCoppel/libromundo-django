@@ -210,6 +210,10 @@ CSRF_COOKIE_SAMESITE = 'Lax'
 SECURE_BROWSER_XSS_FILTER = True    # Header X-XSS-Protection
 X_FRAME_OPTIONS = 'DENY'           # Previene clickjacking
 
+# Proxy confiable: solo confiar en X-Forwarded-For si hay un reverse proxy configurado.
+# En desarrollo sin proxy, usar False para evitar spoofing de IP.
+USE_X_FORWARDED_FOR = False
+
 # reCAPTCHA settings
 RECAPTCHA_PUBLIC_KEY = os.environ.get('RECAPTCHA_PUBLIC_KEY', '6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI')  # Test key
 RECAPTCHA_PRIVATE_KEY = os.environ.get('RECAPTCHA_PRIVATE_KEY', '6LeIxAcTAAAAAGG-vFI1TnRWxMZNFuojJ4WifJWe')  # Test key

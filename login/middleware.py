@@ -10,6 +10,18 @@ from django.conf import settings
 security_logger = logging.getLogger('libromundo_security')
 
 
+def get_client_ip(request):
+    """Obtiene la IP del cliente de forma segura.
+    Solo confía en X-Forwarded-For si USE_X_FORWARDED_FOR está habilitado en settings.
+    Esto previene spoofing de IP cuando no hay reverse proxy."""
+    use_xff = getattr(settings, 'USE_X_FORWARDED_FOR', False)
+    if use_xff:
+        x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
+        if x_forwarded_for:
+            return x_forwarded_for.split(',')[0].strip()
+    return request.META.get('REMOTE_ADDR', 'unknown')
+
+
 class SecurityLoggingMiddleware:
     """
     Middleware que registra todas las peticiones HTTP con información de seguridad.
@@ -22,13 +34,7 @@ class SecurityLoggingMiddleware:
 
     def __call__(self, request):
         start_time = time.time()
-
-        # Obtener IP del cliente
-        x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
-        if x_forwarded_for:
-            client_ip = x_forwarded_for.split(',')[0].strip()
-        else:
-            client_ip = request.META.get('REMOTE_ADDR', 'unknown')
+        client_ip = get_client_ip(request)
 
         # Procesar la petición
         response = self.get_response(request)
@@ -98,12 +104,7 @@ class RateLimitMiddleware:
             del self._request_counts[key]
 
     def __call__(self, request):
-        x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
-        if x_forwarded_for:
-            client_ip = x_forwarded_for.split(',')[0].strip()
-        else:
-            client_ip = request.META.get('REMOTE_ADDR', 'unknown')
-
+        client_ip = get_client_ip(request)
         current_time = time.time()
         is_login = request.path == '/accounts/login/' and request.method == 'POST'
 
