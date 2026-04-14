@@ -146,7 +146,7 @@ class DastScanner:
             headers = {'Referer': f'{self.base_url}/accounts/login/'}
             status, _, body = self._request('/accounts/login/', method='POST', data=data, headers=headers)
 
-            if status == 403 or 'Demasiadas solicitudes' in body:
+            if status == 429 or 'Demasiadas solicitudes' in body:
                 blocked = True
                 self._add_result(
                     "Brute Force Protection",
@@ -191,7 +191,7 @@ class DastScanner:
             headers = {'Referer': f'{self.base_url}/accounts/login/'}
             status, _, body = self._request('/accounts/login/', method='POST', data=data, headers=headers)
 
-            if status == 500 or 'error' in body.lower() and 'sql' in body.lower():
+            if status == 500 or ('error' in body.lower() and 'sql' in body.lower()):
                 self._add_result(
                     f"SQL Injection: {payload[:30]}",
                     "CRITICAL",

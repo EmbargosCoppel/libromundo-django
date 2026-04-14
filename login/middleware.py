@@ -4,7 +4,7 @@ Implementa logging de todas las peticiones HTTP y protección contra ataques com
 """
 import time
 import logging
-from django.http import HttpResponseForbidden
+from django.http import HttpResponse
 from django.conf import settings
 
 security_logger = logging.getLogger('libromundo_security')
@@ -77,11 +77,25 @@ class RateLimitMiddleware:
 
     # Cache simple en memoria para rate limiting
     _request_counts = {}
+    _last_cleanup = 0
     MAX_REQUESTS_PER_MINUTE = 30  # Límite general
     MAX_LOGIN_ATTEMPTS_PER_MINUTE = 5  # Límite para login
+    CLEANUP_INTERVAL = 300  # Limpiar keys inactivos cada 5 minutos
 
     def __init__(self, get_response):
         self.get_response = get_response
+
+    def _cleanup_stale_keys(self, current_time):
+        """Elimina keys sin timestamps recientes para evitar crecimiento ilimitado de memoria."""
+        if current_time - self._last_cleanup < self.CLEANUP_INTERVAL:
+            return
+        RateLimitMiddleware._last_cleanup = current_time
+        stale_keys = [
+            key for key, timestamps in self._request_counts.items()
+            if not timestamps or all(current_time - t >= 60 for t in timestamps)
+        ]
+        for key in stale_keys:
+            del self._request_counts[key]
 
     def __call__(self, request):
         x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
@@ -92,6 +106,9 @@ class RateLimitMiddleware:
 
         current_time = time.time()
         is_login = request.path == '/accounts/login/' and request.method == 'POST'
+
+        # Limpieza periódica de keys inactivos
+        self._cleanup_stale_keys(current_time)
 
         # Limpiar entradas antiguas (más de 60 segundos)
         key = f"{client_ip}:{'login' if is_login else 'general'}"
@@ -114,9 +131,10 @@ class RateLimitMiddleware:
                     'event_type': 'RATE_LIMIT',
                 }
             )
-            return HttpResponseForbidden(
+            return HttpResponse(
                 '<h1>429 - Demasiadas solicitudes</h1>'
-                '<p>Has excedido el límite de solicitudes. Intenta de nuevo en un minuto.</p>'
+                '<p>Has excedido el límite de solicitudes. Intenta de nuevo en un minuto.</p>',
+                status=429
             )
 
         # Registrar esta petición
