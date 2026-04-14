@@ -35,6 +35,8 @@ ROOT_URLCONF = 'Libreria.urls'
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'login.middleware.SecurityHeadersMiddleware',
+    'login.middleware.RateLimitMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -42,6 +44,7 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'csp.middleware.CSPMiddleware',
+    'login.middleware.SecurityLoggingMiddleware',
 ]
 
 TEMPLATES = [
@@ -159,6 +162,10 @@ LOGGING = {
             '()': 'pythonjsonlogger.jsonlogger.JsonFormatter',
             'format': '%(asctime)s %(levelname)s %(message)s %(ip)s %(user)s %(event_type)s',
         },
+        'verbose': {
+            'format': '[{asctime}] {levelname} {message}',
+            'style': '{',
+        },
     },
     'handlers': {
         'security_file': {
@@ -167,15 +174,41 @@ LOGGING = {
             'filename': os.path.join(BASE_DIR, 'logs', 'libromundo_security.json'),
             'formatter': 'json',
         },
+        'console': {
+            'level': 'WARNING',
+            'class': 'logging.StreamHandler',
+            'formatter': 'verbose',
+        },
     },
     'loggers': {
         'libromundo_security': {
-            'handlers': ['security_file'],
+            'handlers': ['security_file', 'console'],
             'level': 'INFO',
+            'propagate': False,
+        },
+        'django.security': {
+            'handlers': ['security_file', 'console'],
+            'level': 'WARNING',
             'propagate': False,
         },
     },
 }
+
+# --- SEGURIDAD DE SESIONES ---
+SESSION_COOKIE_HTTPONLY = True       # Previene acceso a cookie desde JavaScript (XSS)
+SESSION_COOKIE_SECURE = False       # True en producción con HTTPS
+SESSION_COOKIE_SAMESITE = 'Lax'    # Protección CSRF para cookies
+SESSION_EXPIRE_AT_BROWSER_CLOSE = True  # Sesión expira al cerrar navegador
+SESSION_COOKIE_AGE = 3600          # Sesión expira después de 1 hora (segundos)
+
+# --- PROTECCIÓN CSRF ---
+CSRF_COOKIE_HTTPONLY = True         # Cookie CSRF no accesible desde JS
+CSRF_COOKIE_SECURE = False          # True en producción con HTTPS
+CSRF_COOKIE_SAMESITE = 'Lax'
+
+# --- SEGURIDAD ADICIONAL ---
+SECURE_BROWSER_XSS_FILTER = True    # Header X-XSS-Protection
+X_FRAME_OPTIONS = 'DENY'           # Previene clickjacking
 
 # reCAPTCHA settings
 RECAPTCHA_PUBLIC_KEY = os.environ.get('RECAPTCHA_PUBLIC_KEY', '6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI')  # Test key

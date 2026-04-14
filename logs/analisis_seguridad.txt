@@ -1,0 +1,71 @@
+======================================================================
+  REPORTE DE ANÁLISIS DE LOGS DE SEGURIDAD - LIBROMUNDO
+  Fecha de análisis: 2026-04-14 05:34:58
+  Total de registros analizados: 26
+======================================================================
+
+1. RESUMEN DE EVENTOS POR TIPO
+----------------------------------------
+  🟡 ADVERTENCIA | AUTH_FAIL: 6 eventos
+  🟢 INFO | AUTH_SUCCESS: 6 eventos
+  🟢 INFO | LOGOUT: 5 eventos
+  🟢 INFO | ONLINE_READ: 3 eventos
+  🟢 INFO | CATALOG_VIEW: 3 eventos
+  🟢 INFO | DATA_MOD: 2 eventos
+  🟡 ADVERTENCIA | REGISTRATION_FAIL: 1 eventos
+
+2. INTENTOS FALLIDOS POR IP
+----------------------------------------
+  IP: 127.0.0.1 → 7 intentos fallidos
+    - Usuario:  SADGC | Tipo: AUTH_FAIL | Hora: 2026-03-17 19:38:26,707
+    - Usuario: angel | Tipo: REGISTRATION_FAIL | Hora: 2026-03-17 19:41:54,549
+    - Usuario: hacker | Tipo: AUTH_FAIL | Hora: 2026-03-19 18:32:42,544
+    - Usuario: Miguel | Tipo: AUTH_FAIL | Hora: 2026-03-26 18:52:59,460
+    - Usuario: Miguel | Tipo: AUTH_FAIL | Hora: 2026-03-26 18:53:00,889
+
+3. INTENTOS FALLIDOS POR USUARIO
+----------------------------------------
+  Usuario: Miguel → 2 intentos fallidos
+  Usuario:  SADGC → 1 intentos fallidos
+  Usuario: angel → 1 intentos fallidos
+  Usuario: hacker → 1 intentos fallidos
+  Usuario: admin → 1 intentos fallidos
+  Usuario: prueba → 1 intentos fallidos
+
+4. ALERTAS DE POSIBLE FUERZA BRUTA (≥3 intentos por IP)
+----------------------------------------
+  🔴 ALERTA: IP 127.0.0.1
+     Total intentos: 7
+     Usuarios atacados: Miguel,  SADGC, angel, admin, hacker, prueba
+     Periodo: 2026-03-17 19:38:26,707 → 2026-03-26 18:55:14,122
+
+5. ACCESOS A RECURSOS SENSIBLES
+----------------------------------------
+  Sin accesos a recursos sensibles registrados.
+
+6. ERRORES DEL SISTEMA
+----------------------------------------
+  Sin errores del sistema registrados.
+
+7. MÉTRICAS DE SEGURIDAD
+----------------------------------------
+  Total autenticaciones exitosas: 6
+  Total autenticaciones fallidas: 6
+  Tasa de fallo de autenticación: 50.0%
+  Captchas fallidos: 0
+  Accesos denegados: 0
+  Errores de base de datos: 0
+  Rate limits activados: 0
+
+8. RECOMENDACIONES DE SEGURIDAD
+----------------------------------------
+  ⚠️  Tasa de fallo de autenticación alta (>30%). Considerar bloqueo temporal de cuentas.
+  ⚠️  Ataques de fuerza bruta detectados. Revisar IPs y considerar bloqueo.
+  ✅ Sin accesos sospechosos a recursos sensibles.
+  📌 Revisar periódicamente los logs para detectar anomalías.
+  📌 Implementar alertas automáticas para eventos críticos.
+  📌 Rotar logs periódicamente para gestión de almacenamiento.
+
+======================================================================
+  FIN DEL REPORTE
+======================================================================

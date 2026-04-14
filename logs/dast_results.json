@@ -1,0 +1,170 @@
+[
+  {
+    "test": "Header: X-Frame-Options",
+    "severity": "INFO",
+    "status": "PASS",
+    "details": "Presente con valor: DENY",
+    "recommendation": "",
+    "timestamp": "2026-04-14T05:36:31.297276"
+  },
+  {
+    "test": "Header: X-Content-Type-Options",
+    "severity": "INFO",
+    "status": "PASS",
+    "details": "Presente con valor: nosniff",
+    "recommendation": "",
+    "timestamp": "2026-04-14T05:36:31.297290"
+  },
+  {
+    "test": "Header: Content-Security-Policy",
+    "severity": "INFO",
+    "status": "PASS",
+    "details": "Presente con valor: font-src 'self' https://cdn.jsdelivr.net https://fonts.gstatic.com; style-src 'self' 'unsafe-inline'",
+    "recommendation": "",
+    "timestamp": "2026-04-14T05:36:31.297296"
+  },
+  {
+    "test": "Header: Referrer-Policy",
+    "severity": "INFO",
+    "status": "PASS",
+    "details": "Presente con valor: strict-origin-when-cross-origin",
+    "recommendation": "",
+    "timestamp": "2026-04-14T05:36:31.297302"
+  },
+  {
+    "test": "Header: Permissions-Policy",
+    "severity": "INFO",
+    "status": "PASS",
+    "details": "Presente con valor: camera=(), microphone=(), geolocation=()",
+    "recommendation": "",
+    "timestamp": "2026-04-14T05:36:31.297309"
+  },
+  {
+    "test": "CSRF Protection",
+    "severity": "INFO",
+    "status": "PASS",
+    "details": "Token CSRF presente en formularios de login.",
+    "recommendation": "",
+    "timestamp": "2026-04-14T05:36:31.301123"
+  },
+  {
+    "test": "SQL Injection (Login)",
+    "severity": "INFO",
+    "status": "PASS",
+    "details": "No se detectó vulnerabilidad SQL injection en login. Django ORM protege contra inyección.",
+    "recommendation": "",
+    "timestamp": "2026-04-14T05:36:32.836293"
+  },
+  {
+    "test": "XSS Reflected (Catálogo)",
+    "severity": "INFO",
+    "status": "PASS",
+    "details": "No se detectó XSS reflejado. Templates de Django escapan contenido automáticamente.",
+    "recommendation": "",
+    "timestamp": "2026-04-14T05:36:32.855607"
+  },
+  {
+    "test": "Directory Traversal",
+    "severity": "INFO",
+    "status": "PASS",
+    "details": "No se detectó directory traversal. Django maneja rutas de forma segura.",
+    "recommendation": "",
+    "timestamp": "2026-04-14T05:36:32.873566"
+  },
+  {
+    "test": "Session Cookie: HttpOnly",
+    "severity": "INFO",
+    "status": "PASS",
+    "details": "Cookie de sesión tiene atributo HttpOnly.",
+    "recommendation": "",
+    "timestamp": "2026-04-14T05:36:32.877294"
+  },
+  {
+    "test": "Session Cookie: SameSite",
+    "severity": "INFO",
+    "status": "PASS",
+    "details": "Cookie de sesión tiene atributo SameSite.",
+    "recommendation": "",
+    "timestamp": "2026-04-14T05:36:32.877301"
+  },
+  {
+    "test": "Error Handling: /nonexistent-page-12345/",
+    "severity": "INFO",
+    "status": "PASS",
+    "details": "Respuesta segura (status 404), sin información sensible expuesta.",
+    "recommendation": "",
+    "timestamp": "2026-04-14T05:36:32.883650"
+  },
+  {
+    "test": "Error Handling: /api/libros/99999/",
+    "severity": "INFO",
+    "status": "INFO",
+    "details": "Respuesta segura (status 403), sin información sensible expuesta.",
+    "recommendation": "",
+    "timestamp": "2026-04-14T05:36:32.886348"
+  },
+  {
+    "test": "Error Info Leak: /leer/99999/",
+    "severity": "MEDIUM",
+    "status": "WARNING",
+    "details": "La página de error puede exponer información: password",
+    "recommendation": "Configurar DEBUG=False en producción y usar páginas de error personalizadas.",
+    "timestamp": "2026-04-14T05:36:32.892179"
+  },
+  {
+    "test": "Auth Required: /catalogo/",
+    "severity": "HIGH",
+    "status": "FAIL",
+    "details": "Ruta accesible sin autenticación.",
+    "recommendation": "Agregar @login_required o @user_passes_test.",
+    "timestamp": "2026-04-14T05:36:32.898540"
+  },
+  {
+    "test": "Auth Required: /carrito/",
+    "severity": "HIGH",
+    "status": "FAIL",
+    "details": "Ruta accesible sin autenticación.",
+    "recommendation": "Agregar @login_required o @user_passes_test.",
+    "timestamp": "2026-04-14T05:36:32.904202"
+  },
+  {
+    "test": "Auth Required: /leer/1/",
+    "severity": "HIGH",
+    "status": "FAIL",
+    "details": "Ruta accesible sin autenticación.",
+    "recommendation": "Agregar @login_required o @user_passes_test.",
+    "timestamp": "2026-04-14T05:36:32.909844"
+  },
+  {
+    "test": "Auth Required: /panel/",
+    "severity": "INFO",
+    "status": "PASS",
+    "details": "Ruta protegida (status 403).",
+    "recommendation": "",
+    "timestamp": "2026-04-14T05:36:32.914815"
+  },
+  {
+    "test": "Auth Required: /ventas/",
+    "severity": "INFO",
+    "status": "PASS",
+    "details": "Ruta protegida (status 403).",
+    "recommendation": "",
+    "timestamp": "2026-04-14T05:36:32.919533"
+  },
+  {
+    "test": "HTTP Methods: /comprar/ GET",
+    "severity": "MEDIUM",
+    "status": "WARNING",
+    "details": "Método GET retornó status 200 en /comprar/.",
+    "recommendation": "Usar @require_http_methods para restringir métodos.",
+    "timestamp": "2026-04-14T05:36:32.926074"
+  },
+  {
+    "test": "Brute Force Protection",
+    "severity": "INFO",
+    "status": "PASS",
+    "details": "Rate limiting activado después de 2 intentos.",
+    "recommendation": "",
+    "timestamp": "2026-04-14T05:36:33.315214"
+  }
+]
