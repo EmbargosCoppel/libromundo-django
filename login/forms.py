@@ -1,5 +1,5 @@
 from django import forms
-from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
+from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 from django_recaptcha.fields import ReCaptchaField
 from django_recaptcha.widgets import ReCaptchaV2Checkbox
@@ -10,12 +10,16 @@ class RegistroForm(UserCreationForm):
     class Meta:
         model = User
         fields = ['username', 'email', 'password1', 'password2']
-        widgets = {
-            'username': forms.TextInput(attrs={'placeholder': 'Nombre de usuario'}),
-            'email': forms.EmailInput(attrs={'placeholder': 'Correo electrónico'}),
-            'password1': forms.PasswordInput(attrs={'placeholder': 'Contraseña'}),
-            'password2': forms.PasswordInput(attrs={'placeholder': 'Repite contraseña'}),
-        }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        for field_name, field in self.fields.items():
+            if field_name != 'captcha':
+                field.widget.attrs.update({'class': 'form-control'})
+        self.fields['username'].widget.attrs['placeholder'] = 'Nombre de usuario'
+        self.fields['email'].widget.attrs['placeholder'] = 'Correo electrónico'
+        self.fields['password1'].widget.attrs['placeholder'] = 'Contraseña'
+        self.fields['password2'].widget.attrs['placeholder'] = 'Repite contraseña'
 
     def clean_username(self):
         username = self.cleaned_data.get('username')
@@ -44,18 +48,11 @@ class RegistroForm(UserCreationForm):
             raise forms.ValidationError("La contraseña debe tener al menos 8 caracteres.")
         return password2
 
-class LoginForm(AuthenticationForm):
+class LoginForm(forms.Form):
+    username = forms.CharField(
+        widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Usuario'})
+    )
+    password = forms.CharField(
+        widget=forms.PasswordInput(attrs={'class': 'form-control', 'placeholder': 'Contraseña'})
+    )
     captcha = ReCaptchaField(widget=ReCaptchaV2Checkbox)
-
-    def __init__(self, request=None, *args, **kwargs):
-        super().__init__(request=request, *args, **kwargs)
-        for field in self.fields.values():
-            field.widget.attrs.update({'class': 'form-control'})
-        self.fields['username'].widget.attrs.update({'placeholder': 'Usuario'})
-        self.fields['password'].widget.attrs.update({'placeholder': 'Contraseña'})
-
-    def clean_username(self):
-        username = self.cleaned_data.get('username')
-        if not username:
-            raise forms.ValidationError("El nombre de usuario es obligatorio.")
-        return username
