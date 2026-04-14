@@ -118,8 +118,33 @@ CONTENT_SECURITY_POLICY = {
     'DIRECTIVES': {
         'default-src': ("'self'",),
         'img-src': ("'self'", 'data:'),
-        'script-src': ("'self'", 'https://cdn.jsdelivr.net', 'https://cdn.jsdelivr.net/npm/sweetalert2@11'),
-        'style-src': ("'self'", 'https://cdn.jsdelivr.net', 'https://fonts.googleapis.com'),
+        'script-src': (
+            "'self'",
+            "'unsafe-inline'",
+            'https://cdn.jsdelivr.net',
+            'https://www.google.com',
+            'https://www.gstatic.com',
+        ),
+        'style-src': (
+            "'self'",
+            "'unsafe-inline'",
+            'https://cdn.jsdelivr.net',
+            'https://fonts.googleapis.com',
+        ),
+        'font-src': (
+            "'self'",
+            'https://cdn.jsdelivr.net',
+            'https://fonts.gstatic.com',
+        ),
+        'frame-src': (
+            "'self'",
+            'https://www.google.com',
+            'https://www.gstatic.com',
+        ),
+        'connect-src': (
+            "'self'",
+            'https://www.google.com',
+        ),
     }
 }
 
