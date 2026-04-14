@@ -1,3 +1,5 @@
+from django.shortcuts import render, redirect, get_object_or_404
+from django.utils.http import url_has_allowed_host_and_scheme
 from django.core.mail import send_mail
 from django.core.paginator import Paginator
 from django.db.models import Q
@@ -31,33 +33,36 @@ def login_view(request):
     if request.user.is_authenticated:
         return redirect('home')
     if request.method == 'POST':
-        form = LoginForm(request.POST)
+        form = LoginForm(request, data=request.POST)
+        client_ip = get_client_ip(request)
         if form.is_valid():
-            usuario = form.cleaned_data.get('username')
-            clave = form.cleaned_data.get('password')
-            client_ip = get_client_ip(request)
+            user = form.get_user()
+            usuario = user.username
             try:
-                user = authenticate(request, username=usuario, password=clave)
-                if user is not None:
-                    login(request, user)
-                    security_logger.info(f"Inicio de sesión exitoso: {usuario}", extra={
-                        'ip': client_ip, 'user': usuario, 'event_type': 'AUTH_SUCCESS'
-                    })
-                    return redirect('home')
-                else:
-                    security_logger.warning(f"Intento de login fallido: {usuario}", extra={
-                        'ip': client_ip, 'user': usuario if usuario else 'anonimo', 'event_type': 'AUTH_FAIL'
-                    })
-                    messages.error(request, "Usuario o contraseña incorrectos.")
+                login(request, user)
+                security_logger.info(f"Inicio de sesión exitoso: {usuario}", extra={
+                    'ip': client_ip, 'user': usuario, 'event_type': 'AUTH_SUCCESS'
+                })
+                next_url = request.POST.get('next') or request.GET.get('next') or ''
+                if not url_has_allowed_host_and_scheme(next_url, allowed_hosts={request.get_host()}):
+                    next_url = 'home'
+                return redirect(next_url)
             except DatabaseError as e:
                 security_logger.error(f"Error crítico: SQLException detectada - {str(e)}", extra={
                     'ip': client_ip, 'user': 'sistema', 'event_type': 'DATABASE_ERROR'
                 })
                 messages.error(request, "Error técnico de conexión.")
         else:
-            messages.error(request, "CAPTCHA inválido o datos incorrectos.")
+            usuario = request.POST.get('username', 'anonimo')
+            if 'captcha' in form.errors:
+                messages.error(request, "CAPTCHA inválido o datos incorrectos.")
+            else:
+                security_logger.warning(f"Intento de login fallido: {usuario}", extra={
+                    'ip': client_ip, 'user': usuario, 'event_type': 'AUTH_FAIL'
+                })
+                messages.error(request, "Usuario o contraseña incorrectos.")
     else:
-        form = LoginForm()
+        form = LoginForm(request)
     return render(request, 'registration/login.html', {'form': form})
 
 def registro(request):

@@ -118,8 +118,9 @@ CONTENT_SECURITY_POLICY = {
     'DIRECTIVES': {
         'default-src': ("'self'",),
         'img-src': ("'self'", 'data:'),
-        'script-src': ("'self'", 'https://cdn.jsdelivr.net', 'https://cdn.jsdelivr.net/npm/sweetalert2@11'),
+        'script-src': ("'self'", 'https://cdn.jsdelivr.net', 'https://cdn.jsdelivr.net/npm/sweetalert2@11', 'https://www.google.com', 'https://www.gstatic.com'),
         'style-src': ("'self'", 'https://cdn.jsdelivr.net', 'https://fonts.googleapis.com'),
+        'frame-src': ("'self'", 'https://www.google.com'),
     }
 }
 
