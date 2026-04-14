@@ -1,3 +1,4 @@
+from django.shortcuts import render, redirect, get_object_or_404
 from django.core.mail import send_mail
 from django.core.paginator import Paginator
 from django.db.models import Q
@@ -227,18 +228,26 @@ def reporte_ventas(request):
 @login_required
 @require_http_methods(["POST"]) 
 def procesar_compra(request):
-    security_logger.info("Transacción comercial - DATA_MOD", extra={
-        'ip': get_client_ip(request), 'user': request.user.username, 'event_type': 'DATA_MOD'
-    })
-    # Enviar email de confirmación
-    send_mail(
-        'Compra realizada en Libromundo',
-        f'Hola {request.user.username}, tu compra ha sido procesada exitosamente.',
-        'noreply@libromundo.com',
-        [request.user.email],
-        fail_silently=True,
-    )
-    messages.success(request, "Compra realizada con éxito.")
+    carrito = Carrito.objects.filter(usuario=request.user).first()
+    if carrito:
+        items = ItemCarrito.objects.filter(carrito=carrito)
+        if not items.exists():
+            messages.warning(request, "Tu carrito está vacío.")
+            return redirect('carrito')
+        security_logger.info("Transacción comercial - DATA_MOD", extra={
+            'ip': get_client_ip(request), 'user': request.user.username, 'event_type': 'DATA_MOD'
+        })
+        send_mail(
+            'Compra realizada en Libromundo',
+            f'Hola {request.user.username}, tu compra ha sido procesada exitosamente.',
+            'noreply@libromundo.com',
+            [request.user.email],
+            fail_silently=True,
+        )
+        items.delete()  # Vaciar el carrito
+        messages.success(request, "Compra realizada con éxito.")
+    else:
+        messages.warning(request, "No tienes un carrito activo.")
     return redirect('home')
 
 @user_passes_test(lambda u: u.is_staff, login_url='/accounts/access-denied/')

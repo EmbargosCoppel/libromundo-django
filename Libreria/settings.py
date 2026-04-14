@@ -61,27 +61,12 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'Libreria.wsgi.application'
 
-DB_ENGINE = os.environ.get('DB_ENGINE', 'sqlite')
-
-if DB_ENGINE == 'mysql':
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.mysql',
-            'NAME': os.environ.get('DB_NAME', 'libromundo'),
-            'USER': os.environ.get('DB_USER', 'root'),
-            'PASSWORD': os.environ.get('DB_PASSWORD', 'password'),
-            'HOST': os.environ.get('DB_HOST', 'localhost'),
-            'PORT': os.environ.get('DB_PORT', '3306'),
-            'OPTIONS': {'init_command': "SET sql_mode='STRICT_TRANS_TABLES'"},
-        }
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
     }
-else:
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.sqlite3',
-            'NAME': BASE_DIR / 'db.sqlite3',
-        }
-    }
+}
 
 AUTH_PASSWORD_VALIDATORS = [
     {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',},
@@ -117,9 +102,10 @@ SECURE_HSTS_PRELOAD = True
 CONTENT_SECURITY_POLICY = {
     'DIRECTIVES': {
         'default-src': ("'self'",),
-        'img-src': ("'self'", 'data:'),
-        'script-src': ("'self'", 'https://cdn.jsdelivr.net', 'https://cdn.jsdelivr.net/npm/sweetalert2@11'),
+        'img-src': ("'self'", 'data:', 'https://www.gstatic.com'),
+        'script-src': ("'self'", 'https://cdn.jsdelivr.net', 'https://cdn.jsdelivr.net/npm/sweetalert2@11', 'https://www.google.com/recaptcha/', 'https://www.gstatic.com/recaptcha/'),
         'style-src': ("'self'", 'https://cdn.jsdelivr.net', 'https://fonts.googleapis.com'),
+        'frame-src': ("'self'", 'https://www.google.com/recaptcha/', 'https://recaptcha.google.com/'),
     }
 }
 
