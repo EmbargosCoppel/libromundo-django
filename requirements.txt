@@ -3,3 +3,4 @@ mysqlclient
 python-json-logger
 django-recaptcha
 djangorestframework
+django-csp
